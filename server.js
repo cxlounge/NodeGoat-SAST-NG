@@ -132,13 +132,12 @@ MongoClient.connect(db, (err, db) => {
     routes(app, db);
 
     // Template system setup
+    // Fix for A3 - XSS: Enable auto-escaping to prevent Reflected XSS.
+    // Swig's autoescape encodes HTML special characters in template variables,
+    // preventing user-controlled data (e.g. req.body.userName) from being
+    // reflected as raw HTML into generated pages.
     swig.setDefaults({
-        // Autoescape disabled
-        autoescape: false
-        /*
-        // Fix for A3 - XSS, enable auto escaping
-        autoescape: true // default value
-        */
+        autoescape: true
     });
 
     // Insecure HTTP connection
