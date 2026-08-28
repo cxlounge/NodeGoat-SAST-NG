@@ -41,13 +41,18 @@ function ProfileHandler(db) {
 
         const {
             firstName,
-            lastName,
             ssn,
             dob,
             address,
             bankAcc,
             bankRouting
         } = req.body;
+
+        // Encode lastName at the input boundary to prevent Reflected XSS.
+        // Swig autoescape is disabled globally; ESAPI.encoder().encodeForHTML()
+        // is the SAST-recognised sanitizer that breaks the taint flow before the
+        // value reaches the res.render() sink.
+        const lastName = ESAPI.encoder().encodeForHTML(req.body.lastName);
 
         // Fix for Section: ReDoS attack
         // The following regexPattern that is used to validate the bankRouting number is insecure and vulnerable to
